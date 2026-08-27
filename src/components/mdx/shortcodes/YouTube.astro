@@ -1,0 +1,12 @@
+---
+import { YouTube as YouTubeClient } from "../YouTube.tsx";
+
+interface Props {
+  id: string;
+  title?: string;
+  start?: number;
+  className?: string;
+}
+---
+
+<YouTubeClient {...Astro.props} />

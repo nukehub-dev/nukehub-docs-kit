@@ -1,0 +1,13 @@
+---
+import { Callout as CalloutClient } from "../Callout.tsx";
+
+interface Props {
+  type?: "info" | "note" | "warning" | "tip" | "success" | "danger";
+  title?: string;
+  className?: string;
+}
+---
+
+<CalloutClient {...Astro.props}>
+  <slot />
+</CalloutClient>

@@ -1,0 +1,13 @@
+---
+import { Odysee as OdyseeClient } from "../Odysee.tsx";
+
+interface Props {
+  url?: string;
+  claimName?: string;
+  claimId?: string;
+  title?: string;
+  className?: string;
+}
+---
+
+<OdyseeClient {...Astro.props} />

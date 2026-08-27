@@ -1,0 +1,12 @@
+---
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+const panelId = Math.random().toString(36).slice(2);
+---
+
+<div id={panelId} data-tab-label={label} role="tabpanel" class="tab-panel block p-4" hidden>
+  <slot />
+</div>

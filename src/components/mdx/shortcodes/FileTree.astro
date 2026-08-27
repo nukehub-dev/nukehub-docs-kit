@@ -1,0 +1,10 @@
+---
+import { FileTree as FileTreeClient, type FileTreeItem } from "../FileTree.tsx";
+
+interface Props {
+  items: FileTreeItem[];
+  className?: string;
+}
+---
+
+<FileTreeClient {...Astro.props} />

@@ -1,0 +1,472 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@source "../components";
+
+/* ==========================================================================
+   Tailwind v4 Theme Tokens
+   ========================================================================== */
+
+@theme {
+  --font-sans:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  /* Semantic color tokens mapped to CSS custom properties */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-surface: var(--surface);
+
+  /* OKLCH accent hues for the color picker */
+  --hue-red: 27;
+  --hue-orange: 48;
+  --hue-green: 144;
+  --hue-cyan: 211;
+  --hue-purple: 321;
+}
+
+/* ==========================================================================
+   Dark mode variant hook
+   Usage: <html data-theme="dark"> ... </html>
+   ========================================================================== */
+
+@variant dark (&:where([data-theme="dark"] *));
+
+/* ==========================================================================
+   Base semantic tokens (light mode default)
+   ========================================================================== */
+
+@layer base {
+  :root {
+    --radius: 0.65rem;
+
+    --background: oklch(0.97 0.005 285.823);
+    --foreground: oklch(0.22 0.005 285.823);
+    --card: color-mix(in oklch, var(--primary) 3%, oklch(0.985 0 0));
+    --card-foreground: oklch(0.22 0.005 285.823);
+    --popover: color-mix(in oklch, var(--primary) 3%, oklch(0.985 0 0));
+    --popover-foreground: oklch(0.22 0.005 285.823);
+    --primary: oklch(70% 0.177 48);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.9 0.005 286.033);
+    --secondary-foreground: oklch(0.22 0.005 285.823);
+    --muted: oklch(0.9 0.005 286.033);
+    --muted-foreground: oklch(0.52 0.015 286.067);
+    --accent: oklch(0.9 0.005 286.033);
+    --accent-foreground: oklch(0.22 0.005 285.823);
+    --destructive: oklch(0.6 0.191 22.216);
+    --destructive-foreground: oklch(1 0 0);
+    --border: color-mix(in oklch, var(--primary) 10%, oklch(0 0 0 / 0.07));
+    --input: color-mix(in oklch, var(--primary) 8%, var(--muted));
+    --ring: oklch(70% 0.177 48);
+    --surface: oklch(0.98 0.005 285.885);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+    font-variant-ligatures: none;
+  }
+
+  * {
+    @apply border-border;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  *:hover {
+    scrollbar-color: var(--muted-foreground) transparent;
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--primary) 22%, transparent);
+    color: var(--foreground);
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   Dark mode semantic token overrides
+   ========================================================================== */
+
+[data-theme="dark"] {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0.006 285.885 / 0.8);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.21 0.006 285.885);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(65% 0.18 48);
+  --primary-foreground: oklch(0.97 0.01 48);
+  --secondary: oklch(0.274 0.006 286.033 / 0.55);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.274 0.006 286.033 / 0.55);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.274 0.006 286.033 / 0.55);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(65% 0.18 48);
+  --surface: oklch(0.21 0.006 285.885);
+}
+
+/* ==========================================================================
+   Accent color variants
+   ========================================================================== */
+
+[data-accent="red"] {
+  --primary: oklch(58% 0.155 27);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(58% 0.155 27);
+}
+
+[data-accent="orange"] {
+  --primary: oklch(70% 0.177 48);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(70% 0.177 48);
+}
+
+[data-accent="green"] {
+  --primary: oklch(55% 0.12 144);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(55% 0.12 144);
+}
+
+[data-accent="cyan"] {
+  --primary: oklch(55% 0.095 211);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(55% 0.095 211);
+}
+
+[data-accent="purple"] {
+  --primary: oklch(58% 0.16 321);
+  --primary-foreground: oklch(0.985 0 0);
+  --ring: oklch(58% 0.16 321);
+}
+
+[data-theme="dark"][data-accent="red"] {
+  --primary: oklch(55% 0.18 27);
+  --primary-foreground: oklch(0.97 0.01 27);
+  --ring: oklch(55% 0.18 27);
+}
+
+[data-theme="dark"][data-accent="orange"] {
+  --primary: oklch(65% 0.18 48);
+  --primary-foreground: oklch(0.97 0.01 48);
+  --ring: oklch(65% 0.18 48);
+}
+
+[data-theme="dark"][data-accent="green"] {
+  --primary: oklch(53% 0.14 144);
+  --primary-foreground: oklch(0.97 0.01 144);
+  --ring: oklch(53% 0.14 144);
+}
+
+[data-theme="dark"][data-accent="cyan"] {
+  --primary: oklch(52% 0.12 211);
+  --primary-foreground: oklch(0.97 0.01 211);
+  --ring: oklch(52% 0.12 211);
+}
+
+[data-theme="dark"][data-accent="purple"] {
+  --primary: oklch(50% 0.18 321);
+  --primary-foreground: oklch(0.97 0.01 321);
+  --ring: oklch(50% 0.18 321);
+}
+
+/* ==========================================================================
+   Prose / Typography overrides
+   ========================================================================== */
+
+.prose {
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-lead: var(--muted-foreground);
+  --tw-prose-links: var(--primary);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-counters: var(--muted-foreground);
+  --tw-prose-bullets: var(--muted-foreground);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: var(--primary);
+  --tw-prose-captions: var(--muted-foreground);
+  --tw-prose-code: var(--foreground);
+  --tw-prose-pre-code: var(--foreground);
+  --tw-prose-pre-bg: var(--card);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
+
+  --tw-prose-invert-body: var(--foreground);
+  --tw-prose-invert-headings: var(--foreground);
+  --tw-prose-invert-lead: var(--muted-foreground);
+  --tw-prose-invert-links: var(--primary);
+  --tw-prose-invert-bold: var(--foreground);
+  --tw-prose-invert-counters: var(--muted-foreground);
+  --tw-prose-invert-bullets: var(--muted-foreground);
+  --tw-prose-invert-hr: var(--border);
+  --tw-prose-invert-quotes: var(--foreground);
+  --tw-prose-invert-quote-borders: var(--primary);
+  --tw-prose-invert-captions: var(--muted-foreground);
+  --tw-prose-invert-code: var(--foreground);
+  --tw-prose-invert-pre-code: var(--foreground);
+  --tw-prose-invert-pre-bg: var(--card);
+  --tw-prose-invert-th-borders: var(--border);
+  --tw-prose-invert-td-borders: var(--border);
+}
+
+.prose a {
+  text-decoration: none;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.prose a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose strong {
+  color: var(--primary);
+}
+
+.prose blockquote {
+  font-style: normal;
+  border-left-width: 3px;
+}
+
+.prose code {
+  background-color: var(--muted);
+  padding: 0.15rem 0.375rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875em;
+}
+
+.prose pre {
+  position: relative;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+.prose pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.code-copy-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  color: var(--muted-foreground);
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.code-copy-button:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.code-copy-button svg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.code-copy-button .copy-icon {
+  display: block;
+}
+
+.code-copy-button .check-icon {
+  display: none;
+}
+
+.code-copy-button.copied .copy-icon {
+  display: none;
+}
+
+.code-copy-button.copied .check-icon {
+  display: block;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.prose h2 {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.prose ul > li::marker {
+  color: var(--primary);
+}
+
+.prose ol > li::marker {
+  color: var(--muted-foreground);
+}
+
+/* ==========================================================================
+   Scrollbar webkit
+   ========================================================================== */
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background 0.2s ease;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground) !important;
+}
+
+/* ==========================================================================
+   Glass context-menu bubble utility
+   ========================================================================== */
+
+@layer utilities {
+  .bubble {
+    background:
+      radial-gradient(
+        120% 100% at 10% 0%,
+        color-mix(in oklch, var(--primary) 10%, transparent) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        120% 100% at 100% 0%,
+        color-mix(in oklch, var(--card) 20%, transparent) 0%,
+        transparent 60%
+      );
+    background-color: color-mix(in oklch, var(--card) 85%, transparent);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(12px) saturate(140%);
+    border: 1px solid var(--border);
+    box-shadow:
+      0 8px 32px -8px color-mix(in oklch, var(--foreground) 12%, transparent),
+      inset 0 1px 0 0 color-mix(in oklch, var(--card) 40%, transparent);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* ==========================================================================
+   Global cursor utilities
+   ========================================================================== */
+
+button,
+a,
+[role="button"],
+[role="switch"],
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+label {
+  cursor: pointer;
+}
+
+button:disabled,
+a:disabled,
+[role="button"]:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+input,
+textarea,
+select {
+  cursor: text;
+}

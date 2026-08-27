@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build / generated
+.astro/
+dist/
+
+# Logs
+npm-debug.log*
+*.log
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+
+# Testing
+coverage/

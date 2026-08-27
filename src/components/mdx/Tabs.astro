@@ -1,0 +1,188 @@
+---
+import { cn } from "../../lib/utils";
+
+interface Props {
+  defaultValue?: string;
+  className?: string;
+}
+
+const { defaultValue, className } = Astro.props;
+
+const raw = await Astro.slots.render("default");
+
+interface TabPanel {
+  label: string;
+  panelId: string;
+  content: string;
+}
+
+function parseTabPanels(html: string): TabPanel[] {
+  const tabs: TabPanel[] = [];
+  let index = 0;
+
+  while (index < html.length) {
+    const startMatch = /<div[^>]*class="[^"]*\btab-panel\b[^"]*"[^>]*>/.exec(html.slice(index));
+    if (!startMatch) break;
+
+    const startIndex = index + startMatch.index;
+    const tagEnd = html.indexOf(">", startIndex);
+    if (tagEnd === -1) break;
+
+    const openingTag = html.slice(startIndex, tagEnd + 1);
+    const labelMatch = openingTag.match(/data-tab-label="([^"]*)"/);
+    const idMatch = openingTag.match(/id="([^"]*)"/);
+
+    let depth = 1;
+    let pos = tagEnd + 1;
+    let endIndex = -1;
+
+    while (depth > 0 && pos < html.length) {
+      const nextOpen = html.indexOf("<div", pos);
+      const nextClose = html.indexOf("</div>", pos);
+
+      if (nextClose === -1) break;
+
+      if (nextOpen !== -1 && nextOpen < nextClose) {
+        depth++;
+        pos = nextOpen + 4;
+      } else {
+        depth--;
+        if (depth === 0) {
+          endIndex = nextClose;
+          break;
+        }
+        pos = nextClose + 6;
+      }
+    }
+
+    if (endIndex === -1) break;
+
+    const content = html.slice(tagEnd + 1, endIndex);
+    if (labelMatch && idMatch) {
+      tabs.push({ label: labelMatch[1], panelId: idMatch[1], content });
+    }
+
+    index = endIndex + 6;
+  }
+
+  return tabs;
+}
+
+const tabs = parseTabPanels(raw);
+---
+
+{
+  tabs.length > 0 && (
+    <div
+      class={cn(
+        "not-prose my-6 overflow-hidden rounded-xl border border-border/50 bg-card",
+        className,
+      )}
+      data-tabs
+      data-tabs-default={defaultValue}
+    >
+      <div class="flex overflow-x-auto border-b border-border/50 bg-muted/50" role="tablist">
+        {tabs.map((tab, index) => {
+          const isActive = tab.label === defaultValue || (!defaultValue && index === 0);
+          return (
+            <button
+              type="button"
+              role="tab"
+              data-tab-target={tab.panelId}
+              aria-selected={isActive ? "true" : "false"}
+              class={cn(
+                "relative shrink-0 rounded-t-lg px-4 py-2.5 text-sm font-medium transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+                isActive
+                  ? "bg-card text-foreground"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              {tab.label}
+              {isActive && (
+                <span class="tab-indicator absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+      <div class="tabs-panels">
+        {tabs.map((tab, index) => {
+          const isActive = tab.label === defaultValue || (!defaultValue && index === 0);
+          return (
+            <div
+              id={tab.panelId}
+              data-tab-label={tab.label}
+              role="tabpanel"
+              class={cn(
+                "tab-panel block space-y-4 p-4 [&>:first-child]:mt-0 [&>:last-child]:mb-0",
+                !isActive && "hidden",
+              )}
+              set:html={tab.content}
+            />
+          );
+        })}
+      </div>
+    </div>
+  )
+}
+
+<script is:inline>
+  (function () {
+    function switchTab(button) {
+      var container = button.closest("[data-tabs]");
+      if (!container) return;
+
+      var targetId = button.getAttribute("data-tab-target");
+      if (!targetId) return;
+
+      var buttons = container.querySelectorAll('[role="tab"]');
+      var panels = container.querySelectorAll(".tab-panel[role='tabpanel']");
+
+      buttons.forEach(function (btn) {
+        btn.setAttribute("aria-selected", "false");
+        btn.classList.remove("bg-card", "text-foreground");
+        btn.classList.add("text-muted-foreground", "hover:bg-muted/50", "hover:text-foreground");
+        var indicator = btn.querySelector(".tab-indicator");
+        if (indicator) indicator.remove();
+      });
+
+      panels.forEach(function (panel) {
+        panel.classList.add("hidden");
+      });
+
+      button.setAttribute("aria-selected", "true");
+      button.classList.remove(
+        "text-muted-foreground",
+        "hover:bg-muted/50",
+        "hover:text-foreground",
+      );
+      button.classList.add("bg-card", "text-foreground");
+
+      var newIndicator = document.createElement("span");
+      newIndicator.className = "tab-indicator absolute bottom-0 left-0 right-0 h-0.5 bg-primary";
+      button.appendChild(newIndicator);
+
+      var targetPanel = document.getElementById(targetId);
+      if (targetPanel) targetPanel.classList.remove("hidden");
+    }
+
+    function initTabs(container) {
+      container.addEventListener("click", function (event) {
+        var button = event.target.closest('[role="tab"]');
+        if (!button || button.closest("[data-tabs]") !== container) return;
+        event.preventDefault();
+        switchTab(button);
+      });
+    }
+
+    function initAllTabs() {
+      document.querySelectorAll("[data-tabs]:not([data-tabs-init])").forEach(function (container) {
+        container.setAttribute("data-tabs-init", "");
+        initTabs(container);
+      });
+    }
+
+    initAllTabs();
+  })();
+</script>

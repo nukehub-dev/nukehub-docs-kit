@@ -1,0 +1,176 @@
+---
+import type { SiteConfig } from "../../lib/site";
+import type { NavItem } from "../../lib/nav";
+import { GitHubIcon } from "../icons/GitHubIcon";
+import { ThemeToggle } from "../shared/ThemeToggle";
+import { SearchButton } from "../shared/SearchButton";
+import { Menu, X, ArrowUpRight, PanelLeft } from "lucide-react";
+
+export interface Props {
+  base: string;
+  site: SiteConfig;
+  navItems: NavItem[];
+}
+
+const { base, site, navItems } = Astro.props;
+
+function normalizeHref(url: string) {
+  const normalizedBase = base.endsWith("/") ? base : `${base}/`;
+  return url.startsWith("/") ? `${normalizedBase}${url.slice(1)}` : url;
+}
+
+const Logo = site.logo;
+---
+
+<header class="sticky top-0 z-50 w-full border-b border-border bg-background">
+  <div class="mx-auto flex h-14 max-w-[90rem] items-center justify-between px-4 sm:px-6 lg:px-8">
+    {/* Logo */}
+    <a
+      href={base}
+      class="flex items-center gap-2 text-lg font-semibold text-foreground transition-opacity hover:opacity-80"
+    >
+      <Logo size={24} className="text-primary" />
+      <span>{site.logoText}</span>
+    </a>
+
+    {/* Desktop Nav */}
+    <nav class="hidden items-center gap-1 lg:flex">
+      {
+        navItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <a
+              href={normalizeHref(item.url)}
+              target={item.newpage ? "_blank" : undefined}
+              rel={item.newpage ? "noopener noreferrer" : undefined}
+              class="group inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <Icon className="h-4 w-4" />
+              {item.title}
+              {item.newpage && (
+                <ArrowUpRight className="h-3 w-3 opacity-50 transition-opacity group-hover:opacity-100" />
+              )}
+            </a>
+          );
+        })
+      }
+    </nav>
+
+    {/* Right side controls */}
+    <div class="flex items-center gap-0.5 sm:gap-1">
+      <SearchButton client:load />
+      <ThemeToggle variant="dropdown" client:load />
+      <a
+        href={site.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+        aria-label="GitHub"
+      >
+        <GitHubIcon className="h-[18px] w-[18px]" />
+      </a>
+
+      {/* Mobile docs sidebar toggle */}
+      <button
+        id="mobile-sidebar-toggle"
+        type="button"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground lg:hidden"
+        aria-label="Toggle docs sidebar"
+        aria-expanded="false"
+        aria-controls="docs-sidebar"
+      >
+        <PanelLeft className="h-5 w-5" />
+      </button>
+
+      {/* Mobile nav menu toggle */}
+      <button
+        id="mobile-nav-toggle"
+        type="button"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground lg:hidden"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        <Menu className="mobile-nav-open h-5 w-5" />
+        <X className="mobile-nav-close hidden h-5 w-5" />
+      </button>
+    </div>
+  </div>
+
+  {/* Mobile nav dropdown */}
+  <div
+    id="mobile-nav"
+    class="max-h-0 overflow-hidden overscroll-contain border-t border-border bg-background transition-all duration-200 ease-in-out lg:hidden"
+    data-state="closed"
+  >
+    <div class="mx-auto max-w-[90rem] space-y-1 px-4 py-4">
+      {
+        navItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <a
+              href={normalizeHref(item.url)}
+              target={item.newpage ? "_blank" : undefined}
+              rel={item.newpage ? "noopener noreferrer" : undefined}
+              class="group flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <Icon className="h-4 w-4" />
+              {item.title}
+              {item.newpage && (
+                <ArrowUpRight className="h-3 w-3 opacity-50 transition-opacity group-hover:opacity-100" />
+              )}
+            </a>
+          );
+        })
+      }
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  (function () {
+    const navToggle = document.getElementById("mobile-nav-toggle");
+    const nav = document.getElementById("mobile-nav");
+    const openIcon = navToggle?.querySelector(".mobile-nav-open");
+    const closeIcon = navToggle?.querySelector(".mobile-nav-close");
+
+    function setNavOpen(open) {
+      if (!nav || !navToggle) return;
+      nav.dataset.state = open ? "open" : "closed";
+      nav.style.maxHeight = open ? "calc(100dvh - 3.5rem)" : "0";
+      nav.style.overflowY = open ? "auto" : "hidden";
+      navToggle.setAttribute("aria-expanded", String(open));
+      openIcon?.classList.toggle("hidden", open);
+      closeIcon?.classList.toggle("hidden", !open);
+    }
+
+    navToggle?.addEventListener("click", function () {
+      const isOpen = nav?.dataset.state === "open";
+      setNavOpen(!isOpen);
+    });
+
+    // Close nav when a link is clicked
+    nav?.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        setNavOpen(false);
+      });
+    });
+
+    // Close nav on Escape or outside click
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setNavOpen(false);
+    });
+    document.addEventListener("click", function (e) {
+      const header = nav?.closest("header");
+      if (nav?.dataset.state === "open" && header && !header.contains(e.target)) {
+        setNavOpen(false);
+      }
+    });
+
+    // Sidebar toggle: dispatch event for the Sidebar React island
+    const sidebarToggle = document.getElementById("mobile-sidebar-toggle");
+    sidebarToggle?.addEventListener("click", function () {
+      document.dispatchEvent(new CustomEvent("sidebar:toggle", { bubbles: true }));
+    });
+  })();
+</script>

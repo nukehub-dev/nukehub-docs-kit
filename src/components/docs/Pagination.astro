@@ -1,0 +1,57 @@
+---
+import { cn } from "../../lib/utils";
+import type { PaginationLink } from "../../lib/docs";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+
+export interface Props {
+  prev?: PaginationLink;
+  next?: PaginationLink;
+  base: string;
+}
+
+const { prev, next, base } = Astro.props;
+
+function slugToHref(baseUrl: string, slug: string): string {
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+  if (!slug || slug === "index") return normalizedBase;
+  return `${normalizedBase}${slug.replace(/^\//, "")}/`;
+}
+---
+
+<nav class="grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="Pagination">
+  {
+    prev ? (
+      <a
+        href={slugToHref(base, prev.slug)}
+        class={cn(
+          "group flex flex-col rounded-xl border border-border/50 bg-card p-4 transition-colors hover:border-primary/30 hover:bg-accent",
+          !next && "sm:col-start-1",
+        )}
+      >
+        <span class="mb-1 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
+          <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+          Previous
+        </span>
+        <span class="text-sm font-semibold text-foreground">{prev.title}</span>
+      </a>
+    ) : (
+      <div />
+    )
+  }
+  {
+    next ? (
+      <a
+        href={slugToHref(base, next.slug)}
+        class="group flex flex-col items-end rounded-xl border border-border/50 bg-card p-4 text-right transition-colors hover:border-primary/30 hover:bg-accent"
+      >
+        <span class="mb-1 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
+          Next
+          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        </span>
+        <span class="text-sm font-semibold text-foreground">{next.title}</span>
+      </a>
+    ) : (
+      <div />
+    )
+  }
+</nav>

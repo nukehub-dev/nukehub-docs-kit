@@ -1,0 +1,73 @@
+{
+  "name": "nukehub-docs-kit",
+  "version": "0.1.0",
+  "description": "Shared components, layouts, and integrations for NukeHub documentation sites.",
+  "type": "module",
+  "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nukehub-dev/nukehub-docs-kit.git"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./components/*": "./src/components/*",
+    "./integrations/*": "./src/integrations/*",
+    "./lib/*": "./src/lib/*",
+    "./styles/*": "./src/styles/*",
+    "./data/*": "./src/data/*",
+    "./scripts/*": "./src/scripts/*",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "nukehub-sync-docs": "./src/scripts/sync-docs.mjs"
+  },
+  "files": [
+    "src",
+    "public"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,astro,css,scss,json,md,yml,yaml}\" \"*.{json,md,mjs,cjs,yml,yaml}\" \".github/workflows/*.yml\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,astro,css,scss,json,md,yml,yaml}\" \"*.{json,md,mjs,cjs,yml,yaml}\" \".github/workflows/*.yml\"",
+    "check": "astro check",
+    "astro": "astro"
+  },
+  "peerDependencies": {
+    "astro": "^7.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@astrojs/mdx": "^7.0.0",
+    "@astrojs/react": "^6.0.0",
+    "@astrojs/sitemap": "^3.7.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "tailwindcss": "^4.0.0",
+    "tailwind-merge": "^3.0.0",
+    "clsx": "^2.0.0"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.20",
+    "framer-motion": "^13.0.0",
+    "lucide-react": "^1.24.0",
+    "mermaid": "^11.17.0",
+    "turndown": "^7.2.0",
+    "turndown-plugin-gfm": "^1.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/turndown": "^5.0.6",
+    "astro": "^7.0.9",
+    "eslint": "^10.7.0",
+    "eslint-plugin-astro": "^3.0.1",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.5",
+    "prettier-plugin-astro": "^0.14.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.64.0"
+  }
+}

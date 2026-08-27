@@ -1,0 +1,16 @@
+---
+import { ImageFigure as ImageFigureClient } from "../ImageFigure.tsx";
+
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  className?: string;
+  aspectRatio?: string;
+  fit?: "cover" | "contain";
+  rounded?: "none" | "sm" | "md" | "lg" | "xl";
+  transparent?: boolean;
+}
+---
+
+<ImageFigureClient {...Astro.props} client:load />

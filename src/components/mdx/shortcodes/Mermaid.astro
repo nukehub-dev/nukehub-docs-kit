@@ -1,0 +1,10 @@
+---
+import { Mermaid as MermaidClient } from "../MermaidClient.tsx";
+
+interface Props {
+  chart: string;
+  className?: string;
+}
+---
+
+<MermaidClient {...Astro.props} client:visible />

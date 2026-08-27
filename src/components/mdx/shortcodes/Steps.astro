@@ -1,0 +1,11 @@
+---
+import { Steps as StepsClient } from "../Steps.tsx";
+
+interface Props {
+  className?: string;
+}
+---
+
+<StepsClient {...Astro.props}>
+  <slot />
+</StepsClient>

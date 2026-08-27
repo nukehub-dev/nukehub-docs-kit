@@ -1,0 +1,302 @@
+import * as React from "react";
+import { createPortal } from "react-dom";
+import { Search, X, Command, FileText, LayoutGrid, ArrowUpRight } from "lucide-react";
+import { cn } from "../../lib/utils";
+import { useFocusTrap } from "../../lib/useFocusTrap";
+
+export interface CommandPalettePage {
+  id: string;
+  title: string;
+  url: string;
+  description?: string;
+  category: string;
+}
+
+interface CommandPaletteProps {
+  isOpen: boolean;
+  onClose: () => void;
+  pages: CommandPalettePage[];
+  base: string;
+}
+
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  FileText,
+  LayoutGrid,
+};
+
+function getItemIcon(item: CommandPalettePage) {
+  return iconMap[item.category] ?? FileText;
+}
+
+function scoreItem(item: CommandPalettePage, query: string): number {
+  const q = query.trim().toLowerCase();
+  if (!q) return 1;
+
+  const title = item.title.toLowerCase();
+  const description = (item.description || "").toLowerCase();
+  const category = item.category.toLowerCase();
+
+  let score = 0;
+  if (title.startsWith(q)) score += 100;
+  else if (title.includes(q)) score += 50;
+
+  if (description.includes(q)) score += 20;
+  if (category.includes(q)) score += 10;
+
+  return score;
+}
+
+function groupItems(items: CommandPalettePage[]): [string, CommandPalettePage[]][] {
+  const grouped = new Map<string, CommandPalettePage[]>();
+  for (const item of items) {
+    const list = grouped.get(item.category) || [];
+    list.push(item);
+    grouped.set(item.category, list);
+  }
+  return Array.from(grouped.entries());
+}
+
+export function CommandPalette({ isOpen, onClose, pages, base }: CommandPaletteProps) {
+  const mounted = React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const [query, setQuery] = React.useState("");
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const resultsRef = React.useRef<HTMLDivElement>(null);
+  const modalRef = useFocusTrap<HTMLDivElement>(isOpen);
+
+  const normalizedBase = base.endsWith("/") ? base : `${base}/`;
+
+  const allItems = React.useMemo(() => pages, [pages]);
+
+  const filteredItems = React.useMemo(() => {
+    if (!query.trim()) return allItems.slice(0, 12);
+    return allItems
+      .map((item) => ({ item, score: scoreItem(item, query) }))
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score || a.item.title.localeCompare(b.item.title))
+      .map(({ item }) => item);
+  }, [allItems, query]);
+
+  const groupedResults = React.useMemo(() => groupItems(filteredItems), [filteredItems]);
+
+  const [wasOpen, setWasOpen] = React.useState(isOpen);
+  if (wasOpen !== isOpen) {
+    setWasOpen(isOpen);
+    setSelectedIndex(0);
+    if (!isOpen) setQuery("");
+  }
+
+  React.useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => inputRef.current?.focus(), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [isOpen]);
+
+  const handleKeyDown = React.useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelectedIndex((i) => (i < filteredItems.length - 1 ? i + 1 : i));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelectedIndex((i) => (i > 0 ? i - 1 : 0));
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        setSelectedIndex(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        setSelectedIndex(filteredItems.length - 1);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        const item = filteredItems[selectedIndex];
+        if (item) {
+          window.location.href = `${normalizedBase}${item.url.replace(/^\//, "")}`;
+          onClose();
+        }
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+      }
+    },
+    [filteredItems, selectedIndex, onClose, normalizedBase],
+  );
+
+  React.useEffect(() => {
+    const container = resultsRef.current;
+    if (!container) return;
+    const selected = container.querySelector<HTMLElement>("[data-selected='true']");
+    selected?.scrollIntoView({ block: "nearest" });
+  }, [selectedIndex]);
+
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className={cn(!isOpen && "hidden")}>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[15vh] sm:p-6"
+          onClick={onClose}
+        >
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm dark:bg-black/70" />
+
+          <div
+            ref={modalRef}
+            className="relative flex w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-border/60 bg-background/95 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-black/60"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={handleKeyDown}
+          >
+            <div className="pointer-events-none absolute -top-24 left-1/2 h-48 w-3/4 -translate-x-1/2 rounded-full bg-primary/20 blur-[80px] opacity-60" />
+
+            <div className="relative flex items-center gap-3 border-b border-border/60 px-4 py-4 dark:border-white/5">
+              <Search className="h-5 w-5 text-muted-foreground" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setSelectedIndex(0);
+                }}
+                placeholder="Search documentation..."
+                className="flex-1 bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
+                aria-label="Search"
+                aria-autocomplete="list"
+                aria-controls="command-palette-results"
+              />
+              <div className="hidden items-center gap-1 text-xs text-muted-foreground sm:flex">
+                <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-sans">
+                  ESC
+                </kbd>
+                <span>to close</span>
+              </div>
+              <button
+                onClick={onClose}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div
+              ref={resultsRef}
+              id="command-palette-results"
+              role="listbox"
+              className="relative max-h-[50vh] overflow-y-auto p-2"
+            >
+              {filteredItems.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Search className="mb-3 h-10 w-10 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground">
+                    No results for &quot;{query}&quot;
+                  </p>
+                </div>
+              ) : (
+                groupedResults.map(([category, items]) => {
+                  const startIndex = filteredItems.findIndex((i) => i.category === category);
+
+                  return (
+                    <div key={category} className="mb-2">
+                      <div className="sticky top-0 z-10 px-3 py-1.5">
+                        <span className="inline-flex rounded-md bg-background/60 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground backdrop-blur-sm">
+                          {category}
+                        </span>
+                      </div>
+                      <div className="space-y-0.5">
+                        {items.map((item) => {
+                          const index = startIndex + items.indexOf(item);
+                          const selected = index === selectedIndex;
+                          const Icon = getItemIcon(item);
+                          const href = `${normalizedBase}${item.url.replace(/^\//, "")}`;
+
+                          return (
+                            <a
+                              key={`${item.category}-${item.id}`}
+                              href={href}
+                              role="option"
+                              aria-selected={selected}
+                              data-selected={selected}
+                              onClick={onClose}
+                              onMouseEnter={() => setSelectedIndex(index)}
+                              className={cn(
+                                "group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors",
+                                selected
+                                  ? "bg-primary/10 text-foreground"
+                                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                              )}
+                            >
+                              <div
+                                className={cn(
+                                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border",
+                                  selected
+                                    ? "border-primary/30 bg-primary/10 text-primary"
+                                    : "border-border bg-muted text-muted-foreground",
+                                )}
+                              >
+                                <Icon className="h-4 w-4" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2 text-sm font-medium">
+                                  <span className="truncate">{item.title}</span>
+                                  <ArrowUpRight className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
+                                </div>
+                                {item.description && (
+                                  <p className="truncate text-xs text-muted-foreground">
+                                    {item.description}
+                                  </p>
+                                )}
+                              </div>
+                            </a>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="relative flex items-center justify-between border-t border-border/60 px-4 py-2.5 text-xs text-muted-foreground dark:border-white/5">
+              <div className="flex items-center gap-3">
+                <span className="hidden items-center gap-1 sm:inline-flex">
+                  <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-sans">
+                    ↑
+                  </kbd>
+                  <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-sans">
+                    ↓
+                  </kbd>
+                  to navigate
+                </span>
+                <span className="hidden items-center gap-1 sm:inline-flex">
+                  <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-sans">
+                    ↵
+                  </kbd>
+                  to open
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Command className="h-3.5 w-3.5" />
+                <span>Command Palette</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>,
+    document.body,
+  );
+}

@@ -1,0 +1,22 @@
+---
+import { DataTable as DataTableClient } from "../DataTable.tsx";
+
+interface Props {
+  columns: Array<{
+    key: string;
+    header: string;
+    align?: "left" | "right" | "center";
+    sortable?: boolean;
+  }>;
+  data: Array<Record<string, any>>;
+  caption?: string;
+  className?: string;
+  sortable?: boolean;
+  searchable?: boolean;
+  pagination?: boolean;
+  pageSize?: number;
+  exportable?: boolean;
+}
+---
+
+<DataTableClient {...Astro.props} client:load />
