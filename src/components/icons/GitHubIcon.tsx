@@ -1,8 +1,10 @@
-export function GitHubIcon({ className }: { className?: string }) {
+export function GitHubIcon({ className, size = 24 }: { className?: string; size?: number }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
+      width={size}
+      height={size}
       fill="none"
       stroke="currentColor"
       strokeWidth={2}
