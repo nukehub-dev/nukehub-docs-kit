@@ -1,0 +1,320 @@
+---
+export interface Props {
+  base: string;
+}
+
+const { base } = Astro.props;
+const homeHref = base.endsWith("/") ? base : `${base}/`;
+---
+
+<section
+  class="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-4 py-24 text-center"
+>
+  {/* Ambient glow */}
+  <div
+    class="pointer-events-none absolute inset-0 opacity-[0.12]"
+    aria-hidden="true"
+    style="background: radial-gradient(circle at 50% 48%, var(--primary) 0%, transparent 55%);"
+  >
+  </div>
+
+  {/* 404 badge */}
+  <div class="relative z-10 mb-6 animate-doc404-reveal animate-doc404-reveal-1">
+    <span
+      class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+        <path d="M12 9v4"></path>
+        <path d="M12 17h.01"></path>
+      </svg>
+      Error 404
+    </span>
+  </div>
+
+  {/* Illustration */}
+  <div
+    class="relative z-10 mb-10 flex h-56 w-56 items-center justify-center animate-doc404-entrance sm:h-72 sm:w-72"
+  >
+    <svg
+      class="doc404-illustration"
+      viewBox="0 0 360 360"
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="Lost document"
+    >
+      <defs>
+        <radialGradient id="doc404-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.35"></stop>
+          <stop offset="100%" stop-color="var(--primary)" stop-opacity="0"></stop>
+        </radialGradient>
+      </defs>
+
+      {/* Glow */}
+      <circle cx="180" cy="180" r="150" fill="url(#doc404-glow)" class="doc404-glow"></circle>
+
+      {/* Document */}
+      <g class="doc404-page" transform-origin="180 180">
+        <path
+          d="M 130 100 L 210 100 L 240 130 L 240 260 L 130 260 Z"
+          fill="var(--primary)"
+          fill-opacity="0.06"
+          stroke="var(--primary)"
+          stroke-width="2.5"
+          stroke-opacity="0.35"
+          stroke-linejoin="round"></path>
+        <path
+          d="M 210 100 L 210 130 L 240 130"
+          fill="none"
+          stroke="var(--primary)"
+          stroke-width="2.5"
+          stroke-opacity="0.45"
+          stroke-linejoin="round"></path>
+        <line
+          x1="150"
+          y1="165"
+          x2="220"
+          y2="165"
+          stroke="var(--primary)"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-opacity="0.3"></line>
+        <line
+          x1="150"
+          y1="190"
+          x2="220"
+          y2="190"
+          stroke="var(--primary)"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-opacity="0.3"></line>
+        <line
+          x1="150"
+          y1="215"
+          x2="195"
+          y2="215"
+          stroke="var(--primary)"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-opacity="0.3"></line>
+      </g>
+
+      {/* Magnifying glass */}
+      <g class="doc404-lens" transform-origin="235 235">
+        <circle
+          cx="235"
+          cy="235"
+          r="34"
+          fill="none"
+          stroke="var(--primary)"
+          stroke-width="5"
+          stroke-opacity="0.55"></circle>
+        <line
+          x1="261"
+          y1="261"
+          x2="290"
+          y2="290"
+          stroke="var(--primary)"
+          stroke-width="6"
+          stroke-linecap="round"
+          stroke-opacity="0.55"></line>
+      </g>
+    </svg>
+  </div>
+
+  {/* Heading */}
+  <h1
+    class="relative z-10 max-w-lg text-3xl font-semibold tracking-tight text-foreground animate-doc404-reveal animate-doc404-reveal-2 sm:text-5xl"
+  >
+    Page not found
+  </h1>
+  <p
+    class="relative z-10 mt-3 max-w-md text-base text-muted-foreground animate-doc404-reveal animate-doc404-reveal-3 sm:text-lg"
+  >
+    The page you're looking for doesn't exist. If you followed a link ending in <code
+      class="rounded bg-muted px-1 py-0.5 text-sm">.md</code
+    >, the trailing slash version should work.
+  </p>
+
+  {/* Status indicators */}
+  <div
+    class="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-3 text-xs font-medium text-muted-foreground animate-doc404-reveal animate-doc404-reveal-3"
+  >
+    <span class="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1">
+      <span class="h-1.5 w-1.5 rounded-full bg-destructive animate-pulse" aria-hidden="true"></span>
+      Not found
+    </span>
+    <span class="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1">
+      <span class="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true"></span>
+      Return path available
+    </span>
+  </div>
+
+  {/* CTA */}
+  <div class="relative z-10 mt-10 animate-doc404-reveal animate-doc404-reveal-3">
+    <a
+      href={homeHref}
+      class="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+    >
+      Go home
+    </a>
+  </div>
+
+  {/* Decorative particles */}
+  <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+    {
+      Array.from({ length: 20 }).map((_, i) => {
+        const left = 10 + ((i * 37) % 80);
+        const top = 15 + ((i * 53) % 70);
+        const delay = (i * 0.12) % 3;
+        const duration = 2 + ((i * 0.23) % 3);
+        return (
+          <span
+            class="absolute h-1 w-1 rounded-full bg-primary/25"
+            style={{
+              left: `${left}%`,
+              top: `${top}%`,
+              animation: `doc404-pulse ${duration}s ease-in-out infinite`,
+              animationDelay: `${delay}s`,
+            }}
+          />
+        );
+      })
+    }
+  </div>
+
+  <style>
+    .doc404-illustration {
+      width: 100%;
+      height: 100%;
+      max-width: 360px;
+      max-height: 360px;
+      overflow: visible;
+    }
+
+    .doc404-glow {
+      transform-origin: center;
+      animation: doc404-glow-pulse 6s ease-in-out infinite;
+    }
+
+    .doc404-page {
+      animation: doc404-page-bob 5s ease-in-out infinite;
+    }
+
+    .doc404-lens {
+      animation: doc404-lens-bob 4s ease-in-out infinite;
+    }
+
+    .animate-doc404-entrance {
+      animation: doc404-entrance 0.7s ease-out both;
+    }
+
+    .animate-doc404-reveal {
+      opacity: 0;
+      animation: doc404-reveal 0.6s ease-out forwards;
+    }
+
+    .animate-doc404-reveal-1 {
+      animation-delay: 0.1s;
+    }
+
+    .animate-doc404-reveal-2 {
+      animation-delay: 0.25s;
+    }
+
+    .animate-doc404-reveal-3 {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes doc404-glow-pulse {
+      0%,
+      100% {
+        opacity: 0.6;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.9;
+        transform: scale(1.04);
+      }
+    }
+
+    @keyframes doc404-page-bob {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    @keyframes doc404-lens-bob {
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(4px) rotate(3deg);
+      }
+    }
+
+    @keyframes doc404-entrance {
+      from {
+        opacity: 0;
+        transform: scale(0.85);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes doc404-reveal {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes doc404-pulse {
+      0%,
+      100% {
+        opacity: 0.15;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.45;
+        transform: scale(1.5);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .doc404-glow,
+      .doc404-page,
+      .doc404-lens,
+      .animate-doc404-entrance,
+      .animate-doc404-reveal {
+        animation: none;
+      }
+
+      .animate-doc404-reveal {
+        opacity: 1;
+      }
+    }
+  </style>
+</section>

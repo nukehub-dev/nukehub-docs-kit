@@ -5,6 +5,7 @@ Shared components, layouts, shortcodes, theme, and build tooling for NukeHub doc
 ## What it provides
 
 - **Astro layouts**: `BaseLayout`, `DocLayout`
+- **Docs components**: `TableOfContents`, `Pagination`, `EditLink`, `NotFound`
 - **React components**: header, footer, sidebar, command palette, theme toggle, search, scroll progress, context menu, lightbox
 - **MDX shortcodes**: `Callout`, `Tabs`, `TabItem`, `FileTree`, `Mermaid`, `Steps`, `Step`, `YouTube`, `Odysee`, `ImageFigure`, `DataTable`
 - **Theme**: Tailwind CSS v4 tokens, dark/light/system mode, accent-color picker, and global styles. The favicon and theme-color meta tag follow the selected accent.
@@ -57,6 +58,21 @@ The kit generates a dynamic, theme-aware favicon so the tab icon matches the use
 - Place a `favicon.svg` in your project's `public/` directory. It is used as the no-JS fallback.
 - When JavaScript runs, the kit replaces it with a data-URI SVG colored from the current `--primary` CSS variable.
 - The dynamic favicon uses the built-in NukeHub logo paths. To use a custom logo dynamically, override `BaseLayout.astro` or provide your own favicon generation script.
+
+## 404 page
+
+Use the `NotFound` component for a themed 404 page:
+
+```astro
+---
+import BaseLayout from "nukehub-docs-kit/components/layout/BaseLayout.astro";
+import NotFound from "nukehub-docs-kit/components/docs/NotFound.astro";
+---
+
+<BaseLayout site={SITE} navItems={navItems} title={`404 — Page not found | ${SITE.name}`}>
+  <NotFound base={SITE.base} />
+</BaseLayout>
+```
 
 ## Updating the kit
 

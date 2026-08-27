@@ -117,7 +117,7 @@ High-level layout:
   - `layout/` — `BaseLayout`, `DocLayout`, `Header`, `Footer`, `Sidebar`.
   - `shared/` — `CommandPalette`, `ThemeToggle`, `SearchButton`, `ScrollProgress`, `GlobalContextMenu`, `GlassContextMenu`, `ImageLightbox`.
   - `ui/` — primitives: `Button`, `Card`, `Tooltip`, `Logo`, `Input`, `Image`.
-  - `docs/` — `TableOfContents`, `Pagination`, `EditLink`.
+  - `docs/` — `TableOfContents`, `Pagination`, `EditLink`, `NotFound`.
   - `mdx/` — shortcode implementations and Astro wrappers under `mdx/shortcodes/`.
 - `src/lib/` — shared helpers: `utils.ts` (`cn`), `theme.ts`, `docs.ts`, `site.ts`, `nav.ts`, `footer.ts`, `useCommandPalette.ts`, `useFocusTrap.ts`.
 - `src/styles/global.css` — Tailwind v4 entry, theme tokens, prose overrides, scrollbar styles, cursor utilities, and `.bubble` glass utility.
