@@ -50,6 +50,14 @@ npm install nukehub-docs-kit
 4. Add `astro.config.mjs` using the kit's `markdownNegotiation` integration and `@tailwindcss/vite`.
 5. Add docs under `docs/` and run `npx nukehub-sync-docs`.
 
+## Favicon
+
+The kit generates a dynamic, theme-aware favicon so the tab icon matches the user's selected accent and resolved light/dark mode.
+
+- Place a `favicon.svg` in your project's `public/` directory. It is used as the no-JS fallback.
+- When JavaScript runs, the kit replaces it with a data-URI SVG colored from the current `--primary` CSS variable.
+- The dynamic favicon uses the built-in NukeHub logo paths. To use a custom logo dynamically, override `BaseLayout.astro` or provide your own favicon generation script.
+
 ## Updating the kit
 
 When the kit improves, pull the latest version in any consuming project:
