@@ -96,9 +96,9 @@ jobs:
             echo ""
             echo "## Install"
             echo ""
-            echo "```bash"
+            echo '```bash'
             echo "npm install @nukehub/docs-kit@${VERSION}"
-            echo "```"
+            echo '```'
             echo ""
             echo "## npm package page"
             echo ""
