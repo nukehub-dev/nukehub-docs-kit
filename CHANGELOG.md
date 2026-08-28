@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-08-28
+
+### Fixed
+
+- Shiki dual-theme CSS keeps Shiki's default light-mode background for readable token contrast; dark mode switches the container and token spans to `--shiki-dark-bg` / `--shiki-dark`, preserving per-token colors.
+
 ## [0.2.1] - 2026-08-28
 
 ### Fixed

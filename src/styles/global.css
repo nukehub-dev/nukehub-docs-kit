@@ -353,18 +353,14 @@
 }
 
 /* Shiki dual-theme support: Astro emits light syntax colors by default and
-   exposes --shiki-dark-* variables for dark mode. In light mode, replace the
-   stark white Shiki background with the kit's card surface so the block feels
-   integrated with the page. In dark mode, switch to the Shiki dark theme.
-   Only touch the container background/color so per-token span colors and
-   Shiki highlight backgrounds are preserved. */
-.astro-code,
-.astro-code code {
-  background-color: var(--card) !important;
-}
-
+   exposes --shiki-dark-* variables for dark mode. Light mode keeps Shiki's
+   default background so the chosen light theme's token contrast is preserved.
+   In dark mode, switch to the Shiki dark theme. The span override is required
+   because Shiki's light-mode colors are set inline on each token span; the
+   --shiki-dark variable on each span preserves per-token colors. */
 [data-theme="dark"] .astro-code,
-[data-theme="dark"] .astro-code code {
+[data-theme="dark"] .astro-code code,
+[data-theme="dark"] .astro-code span {
   background-color: var(--shiki-dark-bg) !important;
   color: var(--shiki-dark) !important;
 }
