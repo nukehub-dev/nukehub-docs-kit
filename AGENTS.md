@@ -133,10 +133,10 @@ High-level layout:
 - **No Starlight**: do not add `@astrojs/starlight`. The whole UI is custom.
 - **Props-driven identity**: components must receive project-specific data (`site`, `navItems`, `footerColumns`, `footerLegal`) as props. Do not import consumer data files from inside the kit.
 - **Source package**: publish the `src/` directory. The package does not compile to a `dist/`; Astro and TypeScript consume the source directly.
-- **Peer dependencies**: `astro`, `react`, `react-dom`, `@astrojs/react`, `@astrojs/mdx`, `@astrojs/sitemap`, `@tailwindcss/vite`, `tailwindcss`, `tailwind-merge`, and `clsx` are peer dependencies. Consumers install them.
+- **Peer dependencies**: `astro`, `react`, `react-dom`, `@astrojs/react`, `@astrojs/mdx`, `@astrojs/sitemap`, `@tailwindcss/vite`, `tailwindcss`, `tailwind-merge`, and `clsx` are peer dependencies. Consumers install them. `plotly.js-dist-min` and `three` are optional peer dependencies used by the opt-in `Plotly` and `Model3D` shortcodes; they are also listed as dev dependencies so the kit can typecheck and so symlinked local installs can resolve the dynamic imports during builds.
 - **Internal imports use relative paths**: inside the kit, use relative imports so the package works from `node_modules` without Vite aliases.
 - **Tailwind source scanning**: `src/styles/global.css` must include an `@source` directive that points at the kit's component directory (e.g. `@source "../components";`) so Tailwind generates utility classes used inside the package when it is consumed from `node_modules`.
-- **MDX shortcodes**: `Callout`, `Tabs`, `TabItem`, `FileTree`, `Mermaid`, `Steps`, `Step`, `YouTube`, `Odysee`, `ImageFigure`, and `DataTable` are registered in `DocLayout` and available in `.mdx` files.
+- **MDX shortcodes**: `Callout`, `Tabs`, `TabItem`, `FileTree`, `Mermaid`, `Steps`, `Step`, `YouTube`, `Odysee`, `ImageFigure`, and `DataTable` are registered in `DocLayout` and available in `.mdx` files. `Plotly` and `Model3D` are opt-in shortcodes provided by the kit; consumers enable them by installing the optional peer dependencies and passing the components to `DocLayout` via the `mdxComponents` prop.
 - **Theme engine**: stores the preference in `localStorage` under `docs-theme` and applies it via `data-theme` on `<html>`. The default is dark. Accent color is stored under `docs-accent` and applied via `data-accent`; the favicon and `<meta name="theme-color">` are regenerated to match the resolved theme and accent.
 - **Code copy buttons**: every `<pre>` block inside `.prose` automatically gets a copy button via the inline script in `BaseLayout`.
 - **Custom context menu**: `GlobalContextMenu` is mounted in `BaseLayout`. It relies on `framer-motion` and the `.bubble` utility in `global.css`.
@@ -151,6 +151,7 @@ High-level layout:
 - Internal Markdown links must never contain `.md` in the rendered output; `nukehub-sync-docs` handles this.
 - Do not commit build outputs (`dist/`, `.astro/`) or dependencies (`node_modules/`). Use the provided `.gitignore`.
 - When adding a new MDX shortcode, add both the component and a wrapper under `src/components/mdx/shortcodes/` if needed, then register it in `DocLayout`.
+- Heavy opt-in shortcodes (`Plotly`, `Model3D`) must not be registered in `DocLayout` by default. Consumers enable them by passing the components through the `mdxComponents` prop, and the runtime libraries (`plotly.js-dist-min`, `three`) must remain optional peer dependencies.
 
 ## Verification
 

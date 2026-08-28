@@ -35,9 +35,20 @@ export interface Props {
   navItems: NavItem[];
   footerColumns: FooterColumn[];
   footerLegal: FooterLink[];
+  /** Additional MDX components merged into the default shortcode map. */
+  mdxComponents?: Record<string, unknown>;
 }
 
-const { doc, headings, allDocs, site, navItems, footerColumns, footerLegal } = Astro.props;
+const {
+  doc,
+  headings,
+  allDocs,
+  site,
+  navItems,
+  footerColumns,
+  footerLegal,
+  mdxComponents = {},
+} = Astro.props;
 const { Content } = await render(doc);
 
 const sections = buildSidebar(allDocs);
@@ -81,6 +92,7 @@ const description = doc.data.description;
             Odysee,
             ImageFigure,
             DataTable,
+            ...mdxComponents,
           }}
         />
       </article>

@@ -1,0 +1,23 @@
+---
+import { Plotly as PlotlyReact } from "../PlotlyClient";
+import type { Data, Layout, Config } from "plotly.js";
+
+interface Props {
+  data: Data[];
+  layout?: Partial<Layout>;
+  config?: Partial<Config>;
+  className?: string;
+  aspect?: "video" | "square" | "portrait" | "wide" | "auto";
+}
+
+const { data, layout, config, className, aspect } = Astro.props;
+---
+
+<PlotlyReact
+  data={data}
+  layout={layout}
+  config={config}
+  className={className}
+  aspect={aspect}
+  client:visible
+/>

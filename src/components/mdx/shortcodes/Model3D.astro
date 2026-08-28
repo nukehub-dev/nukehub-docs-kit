@@ -1,0 +1,24 @@
+---
+import { Model3D as Model3DReact } from "../Model3DClient";
+
+interface Props {
+  /** URL or path to a `.glb` model file. */
+  src: string;
+  caption?: string;
+  className?: string;
+  aspect?: "video" | "square" | "portrait" | "wide" | "auto";
+  /** Gentle turntable rotation; defaults to false. */
+  autoRotate?: boolean;
+}
+
+const { src, caption, className, aspect, autoRotate } = Astro.props;
+---
+
+<Model3DReact
+  src={src}
+  caption={caption}
+  className={className}
+  aspect={aspect}
+  autoRotate={autoRotate}
+  client:visible
+/>

@@ -8,6 +8,7 @@ Shared components, layouts, shortcodes, theme, and build tooling for NukeHub doc
 - **Docs components**: `TableOfContents`, `Pagination`, `EditLink`, `NotFound`
 - **React components**: header, footer, sidebar, command palette, theme toggle, search, scroll progress, context menu, lightbox
 - **MDX shortcodes**: `Callout`, `Tabs`, `TabItem`, `FileTree`, `Mermaid`, `Steps`, `Step`, `YouTube`, `Odysee`, `ImageFigure`, `DataTable`
+- **Opt-in interactive shortcodes**: `Plotly` and `Model3D` (requires installing `plotly.js-dist-min` and `three`, then passing the components to `DocLayout` via `mdxComponents`)
 - **Theme**: Tailwind CSS v4 tokens, dark/light/system mode, accent-color picker, and global styles. The favicon and theme-color meta tag follow the selected accent.
 - **Utilities**: `cn`, sidebar/pagination helpers, theme helpers
 - **Build integration**: `markdownNegotiation` emits a Markdown sibling for every HTML page
@@ -73,6 +74,44 @@ import NotFound from "@nukehub/docs-kit/components/docs/NotFound.astro";
   <NotFound base={SITE.base} />
 </BaseLayout>
 ```
+
+## Opt-in interactive shortcodes
+
+The kit also provides `Plotly` and `Model3D` shortcodes, but they are not enabled by default because they pull in large runtime dependencies.
+
+To use them:
+
+1. Install the optional peer dependencies in the consumer project:
+
+   ```bash
+   npm install plotly.js-dist-min three
+   npm install -D @types/plotly.js @types/three
+   ```
+
+2. Import the shortcodes and pass them to `DocLayout`:
+
+   ```astro
+   ---
+   import DocLayout from "@nukehub/docs-kit/components/layout/DocLayout.astro";
+   import Plotly from "@nukehub/docs-kit/components/mdx/shortcodes/Plotly.astro";
+   import Model3D from "@nukehub/docs-kit/components/mdx/shortcodes/Model3D.astro";
+   ---
+
+   <DocLayout ... mdxComponents={{ Plotly, Model3D }} />
+   ```
+
+3. Use them in `.mdx` files:
+
+   ```mdx
+   <Plotly
+     data={[{ x: [1, 2, 3], y: [1, 4, 9], type: "scatter", mode: "lines+markers" }]}
+     layout={{ title: "Sample chart" }}
+   />
+
+   <Model3D src="/models/example.glb" caption="A sample 3D model." />
+   ```
+
+Both components dynamically load their runtime libraries and only render on the client.
 
 ## Updating the kit
 
