@@ -19,7 +19,7 @@
     "./package.json": "./package.json"
   },
   "bin": {
-    "nukehub-sync-docs": "./src/scripts/sync-docs.mjs"
+    "nukehub-sync-docs": "src/scripts/sync-docs.mjs"
   },
   "files": [
     "src",

@@ -162,14 +162,29 @@ High-level layout:
 
 ## Release workflow
 
-1. Bump `version` in `package.json`.
-2. Update `CHANGELOG.md` if one exists.
-3. Run the full verification checks.
-4. Publish to npm (or GitHub Packages):
+Releases are automated via `.github/workflows/release.yml`.
+
+1. Run the bump script:
    ```bash
-   npm publish --access public
+   scripts/bump-version.sh 0.2.0
    ```
-5. Consumers update with `npm update nukehub-docs-kit` and rebuild.
+   This updates `package.json` and stamps the `[Unreleased]` section in `CHANGELOG.md`.
+2. Review the diff, commit, and tag:
+   ```bash
+   git add package.json CHANGELOG.md
+   git commit -m "chore: bump version to 0.2.0"
+   git tag v0.2.0
+   git push origin main --tags
+   ```
+3. The workflow runs verification, publishes to npm with provenance, and drafts a GitHub release.
+
+To publish manually (for example, from a local checkout):
+
+```bash
+npm publish --access public
+```
+
+4. Consumers update with `npm update nukehub-docs-kit` and rebuild.
 
 ## Common pitfalls
 
