@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `nukehub-docs-kit` are documented in this file.
+All notable changes to `@nukehub/docs-kit` are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial release of `nukehub-docs-kit`.
+- Initial release of `@nukehub/docs-kit`.
 - Astro layouts: `BaseLayout`, `DocLayout`.
 - Docs components: `TableOfContents`, `Pagination`, `EditLink`, `NotFound`.
 - React components: header, footer, sidebar, command palette, theme toggle, search, scroll progress, context menu, lightbox.

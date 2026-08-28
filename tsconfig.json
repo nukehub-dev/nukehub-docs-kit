@@ -11,7 +11,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "nukehub-docs-kit": ["./src/index.ts"]
+      "@nukehub/docs-kit": ["./src/index.ts"]
     }
   },
   "include": ["src/**/*", "env.d.ts", "eslint.config.mjs"]

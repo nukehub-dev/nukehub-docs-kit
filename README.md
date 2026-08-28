@@ -16,7 +16,7 @@ Shared components, layouts, shortcodes, theme, and build tooling for NukeHub doc
 ## Install
 
 ```bash
-npm install nukehub-docs-kit
+npm install @nukehub/docs-kit
 ```
 
 ## Quick start
@@ -41,8 +41,8 @@ npm install nukehub-docs-kit
 
    ```astro
    ---
-   import DocLayout from "nukehub-docs-kit/components/layout/DocLayout.astro";
-   import BaseLayout from "nukehub-docs-kit/components/layout/BaseLayout.astro";
+   import DocLayout from "@nukehub/docs-kit/components/layout/DocLayout.astro";
+   import BaseLayout from "@nukehub/docs-kit/components/layout/BaseLayout.astro";
    ---
    ```
 
@@ -65,8 +65,8 @@ Use the `NotFound` component for a themed 404 page:
 
 ```astro
 ---
-import BaseLayout from "nukehub-docs-kit/components/layout/BaseLayout.astro";
-import NotFound from "nukehub-docs-kit/components/docs/NotFound.astro";
+import BaseLayout from "@nukehub/docs-kit/components/layout/BaseLayout.astro";
+import NotFound from "@nukehub/docs-kit/components/docs/NotFound.astro";
 ---
 
 <BaseLayout site={SITE} navItems={navItems} title={`404 — Page not found | ${SITE.name}`}>
@@ -79,7 +79,7 @@ import NotFound from "nukehub-docs-kit/components/docs/NotFound.astro";
 When the kit improves, pull the latest version in any consuming project:
 
 ```bash
-npm update nukehub-docs-kit
+npm update @nukehub/docs-kit
 ```
 
 No need to copy files or cherry-pick template changes.

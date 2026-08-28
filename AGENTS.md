@@ -184,16 +184,16 @@ To publish manually (for example, from a local checkout):
 npm publish --access public
 ```
 
-4. Consumers update with `npm update nukehub-docs-kit` and rebuild.
+4. Consumers update with `npm update @nukehub/docs-kit` and rebuild.
 
 ## Common pitfalls
 
 - **Do not import consumer data from inside the kit.** The kit is shared; project-specific values arrive via props.
 - **React islands run on the client.** Any direct use of `document` or `window` outside `useEffect` (or without a mounted guard) will fail SSR. Use `client:only="react"` or the `mounted` pattern from `GlassContextMenu` if a component must never render on the server.
 - **Do not edit generated files.** `dist/`, `.astro/`, and `node_modules/.vite/` are regenerated. Change source only.
-- **Astro `.astro` files cannot be re-exported from a `.ts` index.** Import layouts directly from their subpath, e.g. `nukehub-docs-kit/components/layout/DocLayout.astro`.
+- **Astro `.astro` files cannot be re-exported from a `.ts` index.** Import layouts directly from their subpath, e.g. `@nukehub/docs-kit/components/layout/DocLayout.astro`.
 - **Sync docs before verifying.** `npm run build` runs `sync-docs` automatically, but running `astro build` directly will use stale `src/content/docs/`.
-- **Update consumers after kit changes.** Consumers must reinstall the kit for changes to take effect. Local file dependencies may require `rm -rf node_modules/nukehub-docs-kit && npm install`.
+- **Update consumers after kit changes.** Consumers must reinstall the kit for changes to take effect. Local file dependencies may require `rm -rf node_modules/@nukehub/docs-kit && npm install`.
 
 ## Child NAD Index
 
