@@ -7,6 +7,7 @@ Shared components, layouts, shortcodes, theme, and build tooling for NukeHub doc
 - **Astro layouts**: `BaseLayout`, `DocLayout`
 - **Docs components**: `TableOfContents`, `Pagination`, `EditLink`, `NotFound`
 - **React components**: header, footer, sidebar, command palette, theme toggle, search, scroll progress, context menu, lightbox
+- **UI primitives**: `Button`, `Input`, `Label`, `Textarea`, `Checkbox`, `RadioGroup`, `Select`, `Switch`, `Combobox`, `MultiSelect`, `Slider`, `TimePicker`, `Calendar`, `DateRangePicker`, `Modal`, `Dialog`, `ConfirmDialog`, `SearchInput`, `Badge`, `Skeleton`, `Toast`, `Toaster`
 - **MDX shortcodes**: `Callout`, `Tabs`, `TabItem`, `FileTree`, `Mermaid`, `Steps`, `Step`, `YouTube`, `Odysee`, `ImageFigure`, `DataTable`
 - **Opt-in interactive shortcodes**: `Plotly` and `Model3D` (requires installing `plotly.js-dist-min` and `three`, then passing the components to `DocLayout` via `mdxComponents`)
 - **Theme**: Tailwind CSS v4 tokens, dark/light/system mode, accent-color picker, and global styles. The favicon and theme-color meta tag follow the selected accent.

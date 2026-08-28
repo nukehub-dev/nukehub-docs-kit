@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-29
+
+### Added
+
+- New UI primitives: `Combobox`, `MultiSelect`, `Slider`, `SearchInput`, `Badge`, `Skeleton`, `Calendar`, `TimePicker`, `DateRangePicker`, `Modal`, `Dialog`, `ConfirmDialog`, `Toast`, and `Toaster`.
+
+### Fixed
+
+- Sidebar folder badge count now excludes a folder's own index page when the folder has child pages, so counts match the visible child pages.
+- Root-level docs pages (for example `docs/ui-showcase.mdx`) now appear as a sibling link in the sidebar instead of becoming an empty category.
+- `Slider` thumb is now a solid filled knob with a cleaner focus ring.
+- `MultiSelect` selected chips no longer wrap their remove icon onto a separate line during SSR or in narrow containers.
+
 ## [0.2.2] - 2026-08-28
 
 ### Fixed

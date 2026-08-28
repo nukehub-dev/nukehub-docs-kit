@@ -1,6 +1,6 @@
 {
   "name": "@nukehub/docs-kit",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Shared components, layouts, and integrations for NukeHub documentation sites.",
   "type": "module",
   "license": "BSD-2-Clause",

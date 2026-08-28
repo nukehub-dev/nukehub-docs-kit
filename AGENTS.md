@@ -116,7 +116,7 @@ High-level layout:
 - `src/components/` — UI pieces:
   - `layout/` — `BaseLayout`, `DocLayout`, `Header`, `Footer`, `Sidebar`.
   - `shared/` — `CommandPalette`, `ThemeToggle`, `SearchButton`, `ScrollProgress`, `GlobalContextMenu`, `GlassContextMenu`, `ImageLightbox`.
-  - `ui/` — primitives: `Button`, `Card`, `Tooltip`, `Logo`, `Input`, `Image`.
+  - `ui/` — primitives: `Button`, `Card`, `Tooltip`, `Logo`, `Input`, `Image`, `Label`, `Textarea`, `Checkbox`, `RadioGroup`, `Select`, `Switch`, `Combobox`, `MultiSelect`, `Slider`, `TimePicker`, `Calendar`, `DateRangePicker`, `Modal`, `Dialog`, `ConfirmDialog`, `SearchInput`, `Badge`, `Skeleton`, `Toast`, `Toaster`.
   - `docs/` — `TableOfContents`, `Pagination`, `EditLink`, `NotFound`.
   - `mdx/` — shortcode implementations and Astro wrappers under `mdx/shortcodes/`.
 - `src/lib/` — shared helpers: `utils.ts` (`cn`), `theme.ts`, `docs.ts`, `site.ts`, `nav.ts`, `footer.ts`, `useCommandPalette.ts`, `useFocusTrap.ts`.

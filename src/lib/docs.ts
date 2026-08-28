@@ -92,6 +92,20 @@ function buildTree(docs: CollectionEntry<"docs">[]): Record<string, TreeNode> {
     }
 
     let parent = roots[category].children;
+
+    // Root-level page (e.g. docs/ui-showcase.md) has no segments.
+    if (segments.length === 0) {
+      if (category !== "home") {
+        parent[rawSlug] = {
+          title: label,
+          slug: rawSlug,
+          order,
+          children: {},
+        };
+      }
+      continue;
+    }
+
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
       const isLast = i === segments.length - 1;
@@ -134,7 +148,9 @@ function treeToNodes(nodeMap: Record<string, TreeNode>): SidebarNode[] {
   const nodes: SidebarNode[] = [];
   for (const node of Object.values(nodeMap)) {
     const children = treeToNodes(node.children);
-    let count = node.slug ? 1 : 0;
+    // A folder with its own index page plus children should display the child
+    // count, not add the folder page itself. Only count a standalone page.
+    let count = node.slug && children.length === 0 ? 1 : 0;
     for (const child of children) {
       count += child.count ?? 0;
     }
