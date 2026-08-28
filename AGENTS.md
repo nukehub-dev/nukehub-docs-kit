@@ -176,7 +176,7 @@ Releases are automated via `.github/workflows/release.yml`.
    git tag v0.2.0
    git push origin main --tags
    ```
-3. The workflow runs verification, publishes to npm with provenance, and drafts a GitHub release.
+3. The workflow runs verification, publishes to npm with provenance, and drafts a GitHub release. The release body includes the matching `CHANGELOG.md` section, install commands, a link to the npm package page, and the packed `.tgz` artifact.
 
 To publish manually (for example, from a local checkout):
 
