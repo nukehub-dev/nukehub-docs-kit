@@ -97,12 +97,18 @@ export function Select({
 
     const spaceBelow = viewportHeight - triggerRect.bottom - gap;
     const spaceAbove = triggerRect.top - gap;
-    const placeTop = spaceBelow < DROPDOWN_MAX_HEIGHT && spaceAbove > spaceBelow;
+    // Measure the real dropdown height so short lists attach snugly when
+    // flipped above the trigger instead of leaving a max-height-sized gap.
+    const dropdownHeight = Math.min(
+      dropdownRef.current?.offsetHeight ?? DROPDOWN_MAX_HEIGHT,
+      DROPDOWN_MAX_HEIGHT,
+    );
+    const placeTop = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
 
     setDropdownStyle({
       position: "fixed",
       left: triggerRect.left,
-      top: placeTop ? triggerRect.top - gap - DROPDOWN_MAX_HEIGHT : triggerRect.bottom + gap,
+      top: placeTop ? triggerRect.top - gap - dropdownHeight : triggerRect.bottom + gap,
       width: triggerRect.width,
       maxHeight: DROPDOWN_MAX_HEIGHT,
     });

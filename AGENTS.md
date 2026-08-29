@@ -37,9 +37,20 @@ Update the closest owning `AGENTS.md` when a change affects:
 
 Update `README.md` when a change alters user-visible behavior — public API, install steps, component props, shortcodes, or usage examples.
 
-### Docs Pass
+### Docs and Changelog Pass
 
-`AGENTS.md` updates do not cover user docs. In the same change, also update `README.md` when a change alters public API or install/dev workflows.
+`AGENTS.md` updates do not cover user docs or the changelog. In the same
+change, also update:
+
+- **`README.md`** when a change alters user-visible behavior — public API,
+  component props, shortcodes, install steps, or usage examples.
+- **`CHANGELOG.md`** (`[Unreleased]`, Keep a Changelog format) for every
+  user-visible addition, change, or fix — the release flow
+  (`scripts/bump-version.sh` + tag-triggered `release.yml`) stamps and
+  extracts release notes from it, so an unlogged fix never reaches users.
+
+Internal refactors, bug fixes with no behavior change, and test-only work need
+neither.
 
 ## Hierarchy
 
