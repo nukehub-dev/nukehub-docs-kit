@@ -5,6 +5,7 @@ import { render } from "astro:content";
 import type { SiteConfig } from "../../lib/site";
 import type { NavItem } from "../../lib/nav";
 import type { FooterColumn, FooterLink } from "../../lib/footer";
+import type { Reference } from "../../lib/citations";
 import { buildSidebar, getFlatPages, getPrevNext } from "../../lib/docs";
 import BaseLayout from "./BaseLayout.astro";
 import Header from "./Header.astro";
@@ -26,6 +27,8 @@ import YouTube from "../mdx/shortcodes/YouTube.astro";
 import Odysee from "../mdx/shortcodes/Odysee.astro";
 import ImageFigure from "../mdx/shortcodes/ImageFigure.astro";
 import DataTable from "../mdx/shortcodes/DataTable.astro";
+import { Citation } from "../mdx/shortcodes/Citation";
+import { References } from "../mdx/shortcodes/References";
 
 export interface Props {
   doc: CollectionEntry<"docs">;
@@ -35,6 +38,8 @@ export interface Props {
   navItems: NavItem[];
   footerColumns: FooterColumn[];
   footerLegal: FooterLink[];
+  /** Page references rendered as a bibliography after the content. */
+  references?: Reference[];
   /** Additional MDX components merged into the default shortcode map. */
   mdxComponents?: Record<string, unknown>;
 }
@@ -47,6 +52,7 @@ const {
   navItems,
   footerColumns,
   footerLegal,
+  references = [],
   mdxComponents = {},
 } = Astro.props;
 const { Content } = await render(doc);
@@ -92,10 +98,19 @@ const description = doc.data.description;
             Odysee,
             ImageFigure,
             DataTable,
+            Citation,
             ...mdxComponents,
           }}
         />
       </article>
+
+      {
+        references.length > 0 && (
+          <div class="not-prose">
+            <References references={references} client:visible />
+          </div>
+        )
+      }
 
       <div class="mt-16 border-t border-border/50 pt-8">
         <div class="mb-8">

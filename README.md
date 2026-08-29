@@ -8,7 +8,7 @@ Shared components, layouts, shortcodes, theme, and build tooling for NukeHub doc
 - **Docs components**: `TableOfContents`, `Pagination`, `EditLink`, `NotFound`
 - **React components**: header, footer, sidebar, command palette, theme toggle, search, scroll progress, context menu, lightbox
 - **UI primitives**: `Button`, `Input`, `Label`, `Textarea`, `Checkbox`, `RadioGroup`, `Select`, `Switch`, `Combobox`, `MultiSelect`, `Slider`, `TimePicker`, `Calendar`, `DateRangePicker`, `Modal`, `Dialog`, `ConfirmDialog`, `SearchInput`, `Badge`, `Skeleton`, `Toast`, `Toaster`
-- **MDX shortcodes**: `Callout`, `Tabs`, `TabItem`, `FileTree`, `Mermaid`, `Steps`, `Step`, `YouTube`, `Odysee`, `ImageFigure`, `DataTable`
+- **MDX shortcodes**: `Callout`, `Tabs`, `TabItem`, `FileTree`, `Mermaid`, `Steps`, `Step`, `YouTube`, `Odysee`, `ImageFigure`, `DataTable`, `Citation`
 - **Opt-in interactive shortcodes**: `Plotly` and `Model3D` (requires installing `plotly.js-dist-min` and `three`, then passing the components to `DocLayout` via `mdxComponents`)
 - **Theme**: Tailwind CSS v4 tokens, dark/light/system mode, accent-color picker, and global styles. The favicon and theme-color meta tag follow the selected accent.
 - **Utilities**: `cn`, sidebar/pagination helpers, theme helpers
@@ -113,6 +113,81 @@ To use them:
    ```
 
 Both components dynamically load their runtime libraries and only render on the client.
+
+## Citations
+
+Docs can declare references in frontmatter and cite them inline. `DocLayout` renders a linked bibliography automatically and offers copy-to-clipboard exports in plain text, BibTeX, and RIS.
+
+1. Add a `references` array to your content schema (the shape is exported from `@nukehub/docs-kit`):
+
+   ```ts
+   import { z } from "zod";
+   import type { Reference } from "@nukehub/docs-kit";
+
+   const docs = defineCollection({
+     loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/docs" }),
+     schema: z.object({
+       title: z.string(),
+       references: z
+         .array(
+           z.object({
+             id: z.string(),
+             title: z.string(),
+             url: z.string().url(),
+             source: z.string().optional(),
+             date: z.string().optional(),
+             authors: z.array(z.string()).optional(),
+             type: z.enum(["article", "book", "inproceedings", "techreport", "misc"]).optional(),
+             publisher: z.string().optional(),
+             doi: z.string().optional(),
+             arxiv: z.string().optional(),
+             journal: z.string().optional(),
+             volume: z.string().optional(),
+             issue: z.string().optional(),
+             pages: z.string().optional(),
+           }),
+         )
+         .default([]),
+     }),
+   });
+   ```
+
+2. Pass the references to `DocLayout`:
+
+   ```astro
+   ---
+   import DocLayout from "@nukehub/docs-kit/components/layout/DocLayout.astro";
+   ---
+
+   <DocLayout
+     doc={doc}
+     headings={headings}
+     allDocs={allDocs}
+     site={SITE}
+     navItems={navItems}
+     footerColumns={footerColumns}
+     footerLegal={footerLegal}
+     references={doc.data.references}
+   />
+   ```
+
+3. Declare references in frontmatter and cite them in the MDX body:
+
+   ```mdx
+   ---
+   title: Nuclear data
+   references:
+     - id: openmc-docs
+       title: OpenMC Documentation
+       url: https://docs.openmc.org/
+       source: OpenMC Development Team
+       date: "2023"
+   ---
+
+   OpenMC uses continuous-energy nuclear data<Citation id="openmc-docs" />.
+   ```
+
+For custom layouts, import `References` directly from `@nukehub/docs-kit/components/mdx/shortcodes/References`.
 
 ## Updating the kit
 

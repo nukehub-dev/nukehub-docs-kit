@@ -4,6 +4,8 @@ export type { FooterLink, FooterColumn } from "./lib/footer";
 
 export { cn } from "./lib/utils";
 export { slugToHref, getCategory, getCategoryLabel } from "./lib/docs";
+export { formatCitationText, formatBibTeX, formatRIS, buildCopyFormats } from "./lib/citations";
+export type { Reference, ReferenceType, CopyFormat } from "./lib/citations";
 export {
   resolveTheme,
   getThemePreference,

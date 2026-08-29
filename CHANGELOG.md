@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `SiteConfig` now accepts an optional `faviconPaths` field. Consumers can pass custom SVG path data for the dynamic theme-aware favicon; the kit tints it with the current `--primary` color. Omitting the field keeps the default NukeHub logo.
+- Citation support: `<Citation id="..." />` shortcode and an auto-rendered `References` bibliography. References are declared in page frontmatter and passed to `DocLayout` via the new `references` prop. Each bibliography entry offers copy-to-clipboard exports in plain text, BibTeX, and RIS. The reference schema supports academic fields including `doi`, `arxiv`, `journal`, `volume`, `issue`, and `pages`.
 
 ## [0.3.0] - 2026-08-29
 
