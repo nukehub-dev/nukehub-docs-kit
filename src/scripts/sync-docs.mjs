@@ -93,8 +93,26 @@ function isExternalHref(href) {
   return !href || /^[a-z][a-z0-9+.-]*:/i.test(href) || href.startsWith("/") || href.startsWith("#");
 }
 
+function toPosix(p) {
+  return p.split(path.sep).join("/");
+}
+
+// Route segment for a docs-root-relative file: "tutorials/getting-started.md"
+// -> "tutorials/getting-started"; "theory/index.mdx" -> "theory".
+function routeOf(relFile) {
+  let route = relFile.replace(/\.(md|mdx)$/i, "");
+  route = route.replace(/(^|\/)(index|README)$/, "");
+  return route.replace(/\/$/, "");
+}
+
 function rewriteMarkdownLinks(content, currentFile) {
-  const currentIsRootIndex = currentFile === path.join(docsDst, "index.md");
+  const currentRel = toPosix(path.relative(docsDst, currentFile));
+  const currentIsRootIndex = currentRel === "index.md";
+  const currentRoute = routeOf(currentRel);
+  // Page URLs are directory-like ("<route>/"), so the browser resolves
+  // relative links one segment deeper than the source file's directory.
+  const upPrefix = "../".repeat(currentRoute === "" ? 0 : currentRoute.split("/").length);
+  const docsRelToRepo = toPosix(path.relative(repoRoot, docsSrc));
 
   return content.replace(/\[([^\]]*)\]\(([^)]+)\)/g, (match, text, href) => {
     if (isExternalHref(href)) return match;
@@ -114,29 +132,22 @@ function rewriteMarkdownLinks(content, currentFile) {
     }
 
     if (basename === "CHANGELOG.md") {
-      if (currentIsRootIndex) {
-        return `[${text}](changelog/${fragment})`;
-      }
-      return `[${text}](../changelog/${fragment})`;
-    }
-
-    if (basename === "README.md") {
-      const dir = path.dirname(url);
-      const rewritten = dir === "." ? "./" : `${dir}/`;
-      return `[${text}](${rewritten}${fragment})`;
+      return `[${text}](${upPrefix}changelog/${fragment})`;
     }
 
     if (/\.(md|mdx)$/i.test(basename)) {
-      const bare = basename.replace(/\.(md|mdx)$/i, "");
-      const dir = path.dirname(url);
-      const rewritten =
-        bare === "index"
-          ? dir === "."
-            ? "./"
-            : `${dir}/`
-          : dir === "."
-            ? `./${bare}/`
-            : `${dir}/${bare}/`;
+      // Resolve against the source file's location inside the docs tree.
+      const target = path.posix.normalize(path.posix.join(path.posix.dirname(currentRel), url));
+      if (target.startsWith("..")) {
+        // Points outside the docs tree at a repo file; link to GitHub.
+        if (githubFileBase) {
+          const repoRel = path.posix.normalize(path.posix.join(docsRelToRepo, target));
+          return `[${text}](${githubFileBase}/${repoRel}${fragment})`;
+        }
+        return match;
+      }
+      const targetRoute = routeOf(target);
+      const rewritten = targetRoute === "" ? upPrefix || "./" : `${upPrefix}${targetRoute}/`;
       return `[${text}](${rewritten}${fragment})`;
     }
 

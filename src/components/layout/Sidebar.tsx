@@ -11,8 +11,9 @@ interface SidebarProps {
 
 function slugToHref(base: string, slug: string): string {
   const normalizedBase = base.endsWith("/") ? base : `${base}/`;
-  if (!slug || slug === "index") return normalizedBase;
-  return `${normalizedBase}${slug.replace(/^\//, "")}/`;
+  const clean = slug.replace(/^\//, "").replace(/\/index$/, "");
+  if (!clean || clean === "index") return normalizedBase;
+  return `${normalizedBase}${clean}/`;
 }
 
 function isActiveSubtree(nodes: SidebarNode[], currentSlug: string): boolean {
@@ -28,13 +29,14 @@ interface TreeItemProps {
   currentSlug: string;
   base: string;
   onNavigate: () => void;
-  depth?: number;
 }
 
-function TreeItem({ node, currentSlug, base, onNavigate, depth = 0 }: TreeItemProps) {
+function TreeItem({ node, currentSlug, base, onNavigate }: TreeItemProps) {
   const hasChildren = node.children && node.children.length > 0;
   const active = node.slug === currentSlug;
-  const expanded = hasChildren ? isActiveSubtree(node.children ?? [], currentSlug) : false;
+  const expanded = hasChildren
+    ? active || isActiveSubtree(node.children ?? [], currentSlug)
+    : false;
   const [open, setOpen] = useState(expanded);
 
   useEffect(() => {
@@ -71,12 +73,7 @@ function TreeItem({ node, currentSlug, base, onNavigate, depth = 0 }: TreeItemPr
 
   return (
     <li>
-      <div
-        className={cn(
-          "flex items-center rounded-md",
-          depth > 0 && "ml-4 border-l border-border/40 pl-3",
-        )}
-      >
+      <div className="flex items-center">
         {isGroup ? (
           <button
             type="button"
@@ -97,7 +94,10 @@ function TreeItem({ node, currentSlug, base, onNavigate, depth = 0 }: TreeItemPr
         {node.slug ? (
           <a
             href={slugToHref(base, node.slug)}
-            onClick={onNavigate}
+            onClick={() => {
+              if (isGroup) setOpen(true);
+              onNavigate();
+            }}
             className={cn(
               "flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
               active
@@ -123,7 +123,7 @@ function TreeItem({ node, currentSlug, base, onNavigate, depth = 0 }: TreeItemPr
       </div>
 
       {isGroup && open && (
-        <ul className="mt-0.5 space-y-0.5">
+        <ul className="ml-2.5 mt-0.5 space-y-0.5 border-l border-border/40 pl-3.5">
           {node.children!.map((child) => (
             <TreeItem
               key={child.slug || child.title}
@@ -131,7 +131,6 @@ function TreeItem({ node, currentSlug, base, onNavigate, depth = 0 }: TreeItemPr
               currentSlug={currentSlug}
               base={base}
               onNavigate={onNavigate}
-              depth={depth + 1}
             />
           ))}
         </ul>

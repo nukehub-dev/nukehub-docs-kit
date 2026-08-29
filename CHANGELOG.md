@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-08-30
+
+### Fixed
+
+- `nukehub-sync-docs` now resolves relative Markdown links against the source
+  file's location in the docs tree and rewrites them to route-relative URLs
+  that account for the directory-like page URL (one extra `../` per route
+  segment). Links that are correct in the repository (e.g.
+  `../theory/enrichment.mdx` from `tutorials/`) previously produced 404s on
+  the site unless authors added a bogus extra `../`; links escaping the docs
+  tree now point to GitHub via `--github-file-base`. Nested pages linking to
+  the changelog also resolve correctly at any depth.
+- Sidebar folder groups now render a single continuous vertical guide line for
+  their children (moved from a per-row border — which row rounding curved at
+  the ends and row gaps segmented — to one border on the child list, centered
+  under the expand chevron).
+- Sidebar folder groups with an index page now navigate to it when clicked and
+  expand at the same time; the group also stays expanded while on its own
+  index page. Group links drop the trailing `/index` segment for canonical
+  URLs.
+
 ## [0.3.2] - 2026-08-30
 
 ### Fixed
