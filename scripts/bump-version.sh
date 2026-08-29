@@ -10,8 +10,9 @@
 #   scripts/bump-version.sh 0.2.0
 #
 # Updates:
-#   package.json  - version field
-#   CHANGELOG.md  - stamps [Unreleased] with the new version + date
+#   package.json       - version field
+#   package-lock.json  - version fields (CI installs with `npm ci`)
+#   CHANGELOG.md       - stamps [Unreleased] with the new version + date
 #
 # The script never commits or tags; it prints the follow-up git commands.
 # Re-running with the same version is a no-op.
@@ -45,6 +46,11 @@ else
         fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + '\n');
     "
     echo "  package.json -> $_version"
+    # Keep the lockfile in sync without touching node_modules.
+    if [[ -f "$DIR/package-lock.json" ]]; then
+        (cd "$DIR" && npm install --package-lock-only --ignore-scripts >/dev/null)
+        echo "  package-lock.json -> $_version"
+    fi
 fi
 
 # CHANGELOG: stamp [Unreleased] with the new version and date (skip when the
@@ -64,8 +70,8 @@ echo
 echo "Bumped to $_version."
 echo
 echo "Next steps:"
-echo "  git diff package.json CHANGELOG.md"
-echo "  git add package.json CHANGELOG.md"
+echo "  git diff package.json package-lock.json CHANGELOG.md"
+echo "  git add package.json package-lock.json CHANGELOG.md"
 echo "  git commit -m \"chore: bump version to $_version\""
 echo "  git tag v$_version"
 echo "  git push origin main --tags   # CI publishes to npm from the tag"
