@@ -59,7 +59,7 @@ The kit generates a dynamic, theme-aware favicon so the tab icon matches the use
 
 - Place a `favicon.svg` in your project's `public/` directory. It is used as the no-JS fallback.
 - When JavaScript runs, the kit replaces it with a data-URI SVG colored from the current `--primary` CSS variable.
-- The dynamic favicon uses the built-in NukeHub logo paths. To use a custom logo dynamically, override `BaseLayout.astro` or provide your own favicon generation script.
+- The dynamic favicon uses the built-in NukeHub logo paths. To use a custom logo dynamically, pass `faviconPaths` in your `SiteConfig`. The string should contain SVG elements that use `fill="currentColor"` / `stroke="currentColor"` so the kit can tint them with the selected accent. If `faviconPaths` is omitted, the default NukeHub logo is used.
 
 ## 404 page
 

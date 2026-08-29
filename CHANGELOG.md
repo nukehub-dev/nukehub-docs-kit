@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `SiteConfig` now accepts an optional `faviconPaths` field. Consumers can pass custom SVG path data for the dynamic theme-aware favicon; the kit tints it with the current `--primary` color. Omitting the field keeps the default NukeHub logo.
+
 ## [0.3.0] - 2026-08-29
 
 ### Added

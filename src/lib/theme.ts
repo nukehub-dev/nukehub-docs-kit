@@ -114,10 +114,16 @@ const LOGO_PATHS = `
   </g>
 `;
 
-function generateFaviconDataUrl(color: string): string {
+function getFaviconPaths(): string {
+  if (typeof document === "undefined") return LOGO_PATHS;
+  const link = document.querySelector("link[rel='icon'][type='image/svg+xml']");
+  return link?.getAttribute("data-logo-paths") || LOGO_PATHS;
+}
+
+function generateFaviconDataUrl(color: string, paths: string): string {
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
-      <g style="color: ${color}">${LOGO_PATHS}</g>
+      <g style="color: ${color}">${paths}</g>
     </svg>
   `.trim();
   const encoded = encodeURIComponent(svg).replace(/'/g, "%27").replace(/"/g, "%22");
@@ -127,7 +133,8 @@ function generateFaviconDataUrl(color: string): string {
 export function updateFavicon(): void {
   if (typeof document === "undefined") return;
   const color = readCssVar("--primary", "oklch(58% 0.13 48)");
-  const dataUrl = generateFaviconDataUrl(color);
+  const paths = getFaviconPaths();
+  const dataUrl = generateFaviconDataUrl(color, paths);
 
   let link: HTMLLinkElement | null = document.querySelector(
     "link[rel='icon'][type='image/svg+xml']",
