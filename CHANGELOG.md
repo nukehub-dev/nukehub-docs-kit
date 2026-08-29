@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-08-30
+
+### Fixed
+
+- `Select` dropdowns flipped above the trigger (near the viewport bottom) now measure their real height instead of assuming the 240px max height, so short option lists attach snugly to the trigger instead of floating with a gap.
+
 ## [0.3.1] - 2026-08-30
 
 ### Added
