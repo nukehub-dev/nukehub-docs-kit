@@ -48,6 +48,26 @@ const parentDocs = path.resolve(process.cwd(), "..", "docs");
 const localDocs = path.resolve(process.cwd(), "docs");
 const docsSrc = explicitSrc ?? (existsSync(parentDocs) ? parentDocs : localDocs);
 
+// Repo-relative path of the docs source (e.g. "docs"); null when the docs
+// tree lives outside the repo root and cannot be mapped to GitHub files.
+const docsRelToRepoRaw = toPosix(path.relative(repoRoot, docsSrc));
+const docsRelToRepo = docsRelToRepoRaw.startsWith("..") ? null : docsRelToRepoRaw;
+
+// Set in main() when changelog.md / index.md originate outside the docs tree.
+let changelogFromRepo = false;
+let indexFromReadme = false;
+
+// Repo-relative source path for a synced file, used by EditLink frontmatter.
+function editPathFor(dstFile) {
+  const rel = toPosix(path.relative(docsDst, dstFile));
+  if (rel === "changelog.md" && changelogFromRepo) return "CHANGELOG.md";
+  if (rel === "index.md" && indexFromReadme && docsRelToRepo) {
+    return `${docsRelToRepo}/README.md`;
+  }
+  if (!docsRelToRepo) return null;
+  return `${docsRelToRepo}/${rel}`;
+}
+
 async function copyDir(src, dst) {
   await mkdir(dst, { recursive: true });
   const entries = await (
@@ -71,21 +91,32 @@ function yamlScalar(value) {
   return `"${safe}"`;
 }
 
-async function injectFrontmatter(filePath) {
+async function injectFrontmatter(filePath, editPath) {
   const content = await readFile(filePath, "utf-8");
   const hasFrontmatter = content.trimStart().startsWith("---");
 
   const bodyWithoutH1 = content.replace(/^#\s+.+$/m, "").trimStart();
 
   if (hasFrontmatter) {
-    await writeFile(filePath, bodyWithoutH1);
+    let out = bodyWithoutH1;
+    if (editPath && !/^editPath:/m.test(out)) {
+      // Insert before the closing fence of the leading frontmatter block so
+      // EditLink can point at the real repo file (extension included).
+      out = out.replace(
+        /^---\n([\s\S]*?)\n---/,
+        (match, inner) => `---\n${inner}\neditPath: ${yamlScalar(editPath)}\n---`,
+      );
+    }
+    await writeFile(filePath, out);
     return;
   }
 
   const match = content.match(/^#\s+(.+)$/m);
   const title = match ? match[1].trim() : path.basename(filePath, ".md");
 
-  const lines = ["---", `title: ${yamlScalar(title)}`, "---", ""];
+  const lines = ["---", `title: ${yamlScalar(title)}`];
+  if (editPath) lines.push(`editPath: ${yamlScalar(editPath)}`);
+  lines.push("---", "");
   await writeFile(filePath, lines.join("\n") + bodyWithoutH1);
 }
 
@@ -112,7 +143,7 @@ function rewriteMarkdownLinks(content, currentFile) {
   // Page URLs are directory-like ("<route>/"), so the browser resolves
   // relative links one segment deeper than the source file's directory.
   const upPrefix = "../".repeat(currentRoute === "" ? 0 : currentRoute.split("/").length);
-  const docsRelToRepo = toPosix(path.relative(repoRoot, docsSrc));
+  const docsRelToRepo = docsRelToRepoRaw;
 
   return content.replace(/\[([^\]]*)\]\(([^)]+)\)/g, (match, text, href) => {
     if (isExternalHref(href)) return match;
@@ -178,6 +209,7 @@ async function main() {
   const changelogDst = path.join(docsDst, "changelog.md");
   if (existsSync(repoChangelog) && !existsSync(changelogDst)) {
     await cp(repoChangelog, changelogDst, { preserveTimestamps: true });
+    changelogFromRepo = true;
   }
 
   const readmePath = path.join(docsDst, "README.md");
@@ -185,6 +217,7 @@ async function main() {
   if (existsSync(readmePath)) {
     await cp(readmePath, indexPath, { preserveTimestamps: true });
     await rm(readmePath);
+    indexFromReadme = true;
   }
 
   async function walk(dir) {
@@ -199,7 +232,7 @@ async function main() {
         await walk(entryPath);
       } else if (entry.name.endsWith(".md") || entry.name.endsWith(".mdx")) {
         await rewriteLinksInFile(entryPath);
-        await injectFrontmatter(entryPath);
+        await injectFrontmatter(entryPath, editPathFor(entryPath));
       }
     }
   }

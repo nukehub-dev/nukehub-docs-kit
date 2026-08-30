@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- "Edit this page on GitHub" links no longer 404: `nukehub-sync-docs` now
+  injects an `editPath` frontmatter field with each page's repo-relative
+  source path (extension included), and `EditLink` prefers it over the
+  legacy `site.editPath + doc.id` guess. The changelog page now points at
+  the repo-root `CHANGELOG.md`, and the landing page at `docs/README.md`.
+  Consumers must add `editPath: z.string().optional()` to their docs
+  collection schema for the field to survive validation; without it,
+  `EditLink` keeps the previous fallback behavior.
+
 ## [0.3.3] - 2026-08-30
 
 ### Fixed

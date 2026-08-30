@@ -133,7 +133,7 @@ High-level layout:
 - `src/lib/` — shared helpers: `utils.ts` (`cn`), `theme.ts`, `docs.ts`, `site.ts`, `nav.ts`, `footer.ts`, `useCommandPalette.ts`, `useFocusTrap.ts`.
 - `src/styles/global.css` — Tailwind v4 entry, theme tokens, prose overrides, scrollbar styles, cursor utilities, and `.bubble` glass utility.
 - `src/integrations/markdown-negotiation.ts` — Astro build integration that emits a Markdown sibling for every HTML page.
-- `src/scripts/sync-docs.mjs` — `nukehub-sync-docs` CLI; copies a `docs/` tree into `src/content/docs/`, injects frontmatter, rewrites `.md` links, and copies the repo `CHANGELOG.md`.
+- `src/scripts/sync-docs.mjs` — `nukehub-sync-docs` CLI; copies a `docs/` tree into `src/content/docs/`, injects frontmatter (title plus `editPath`, the repo-relative source path that `EditLink` uses to build working GitHub edit URLs), rewrites `.md` links, and copies the repo `CHANGELOG.md`.
 - `src/data/` — default/example `site.ts`, `nav.ts`, `footer.ts`. Consumers override by passing their own data as props.
 - `src/index.ts` — public API surface: types, default data, `markdownNegotiation`, `Logo`, `GitHubIcon`, and helpers.
 - `package.json` — defines peer dependencies and subpath exports for `components/`, `integrations/`, `lib/`, `styles/`, `data/`, and `scripts/`.

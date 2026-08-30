@@ -10,7 +10,14 @@ export interface Props {
 
 const { doc, site } = Astro.props;
 
-const editUrl = `${site.github}/edit/${site.editBranch}/${site.editPath}${doc.id}`;
+// nukehub-sync-docs injects the repo-relative source path as `editPath`
+// frontmatter (consumers must declare `editPath: z.string().optional()` in
+// their docs schema). Fall back to the legacy editPath + doc.id guess.
+const syncedEditPath = (doc.data as { editPath?: unknown }).editPath;
+const editUrl =
+  typeof syncedEditPath === "string" && syncedEditPath
+    ? `${site.github}/edit/${site.editBranch}/${syncedEditPath}`
+    : `${site.github}/edit/${site.editBranch}/${site.editPath}${doc.id}`;
 ---
 
 <a

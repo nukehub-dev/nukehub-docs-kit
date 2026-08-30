@@ -13,7 +13,7 @@ Shared components, layouts, shortcodes, theme, and build tooling for NukeHub doc
 - **Theme**: Tailwind CSS v4 tokens, dark/light/system mode, accent-color picker, and global styles. The favicon and theme-color meta tag follow the selected accent.
 - **Utilities**: `cn`, sidebar/pagination helpers, theme helpers
 - **Build integration**: `markdownNegotiation` emits a Markdown sibling for every HTML page
-- **Sync CLI**: `nukehub-sync-docs` copies and cleans docs from `../docs/` into `src/content/docs/`
+- **Sync CLI**: `nukehub-sync-docs` copies and cleans docs from `../docs/` into `src/content/docs/`, rewriting Markdown links and injecting frontmatter (including `editPath`, the repo-relative source path used by `EditLink` — declare `editPath: z.string().optional()` in your docs collection schema)
 
 ## Install
 
