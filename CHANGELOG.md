@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `Plotly` and `Model3D` now resolve theme CSS variables through a canvas pixel
+  read instead of relying on `getComputedStyle(...).color`. This fixes charts
+  and 3-D viewers that rendered with a white background (and invisible modebar)
+  in Chrome when the design tokens used `oklch()`/`color-mix()`, because Plotly
+  and three.js cannot parse those modern CSS color serializations.
+- `Plotly` default bottom margin increased from `32` to `48` so x-axis titles
+  and tick labels no longer sit flush against the chart container edge.
+
 ## [0.3.4] - 2026-08-30
 
 ### Fixed

@@ -23,22 +23,28 @@ interface PlotlyProps {
 function getResolvedColor(variable: string): string {
   if (typeof document === "undefined") return "#000000";
 
-  // Resolve the CSS custom property through a real element, then normalize it
-  // to a hex color Plotly can reliably parse (some browsers return oklch or
-  // color(srgb ...) from getComputedStyle).
-  const probe = document.createElement("div");
-  probe.style.position = "fixed";
-  probe.style.visibility = "hidden";
-  probe.style.color = `var(${variable})`;
-  document.body.appendChild(probe);
-  const resolved = getComputedStyle(probe).color;
-  document.body.removeChild(probe);
+  // Read the raw CSS variable value from the document element so it respects
+  // the current data-theme, then paint one canvas pixel to normalize it to a
+  // format Plotly can parse. Browsers serialize oklch()/color-mix() in
+  // incompatible ways, but getImageData always gives concrete sRGB values.
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+  if (!raw) return "#000000";
 
   const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return resolved || "#000000";
-  ctx.fillStyle = resolved;
-  return ctx.fillStyle;
+  canvas.width = 1;
+  canvas.height = 1;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  if (!ctx) return raw;
+
+  ctx.fillStyle = raw;
+  ctx.fillRect(0, 0, 1, 1);
+  const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+
+  if (a === 0) return "transparent";
+  if (a < 255) {
+    return `rgba(${r}, ${g}, ${b}, ${(a / 255).toFixed(3)})`;
+  }
+  return `#${[r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("")}`;
 }
 
 function getThemeColors() {
@@ -100,7 +106,7 @@ function buildLayout(
       activecolor: colors.mutedForeground,
       ...userLayout?.modebar,
     },
-    margin: { t: 32, r: 16, b: 32, l: 48, ...userLayout?.margin },
+    margin: { t: 32, r: 16, b: 48, l: 48, ...userLayout?.margin },
     autosize: true,
     ...userLayout,
   };

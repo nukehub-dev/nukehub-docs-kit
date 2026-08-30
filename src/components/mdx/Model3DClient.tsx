@@ -43,19 +43,24 @@ interface ViewerHandle {
   distance: number;
 }
 
-// Same probe approach as PlotlyClient: resolve a CSS custom property to a
-// concrete color string three.js can parse.
+// Same pixel-read approach as PlotlyClient: resolve a CSS custom property to a
+// concrete hex color three.js can parse.
 function getResolvedColor(variable: string): string {
   if (typeof document === "undefined") return "#000000";
 
-  const probe = document.createElement("div");
-  probe.style.position = "fixed";
-  probe.style.visibility = "hidden";
-  probe.style.color = `var(${variable})`;
-  document.body.appendChild(probe);
-  const resolved = getComputedStyle(probe).color;
-  document.body.removeChild(probe);
-  return resolved;
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+  if (!raw) return "#000000";
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 1;
+  canvas.height = 1;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  if (!ctx) return raw;
+
+  ctx.fillStyle = raw;
+  ctx.fillRect(0, 0, 1, 1);
+  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+  return `#${[r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("")}`;
 }
 
 export function Model3D({
