@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-08-30
+
 ### Fixed
 
 - "Edit this page on GitHub" links no longer 404: `nukehub-sync-docs` now
