@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.5] - 2026-08-30
+
 ### Fixed
 
 - `Plotly` and `Model3D` now resolve theme CSS variables through a canvas pixel
